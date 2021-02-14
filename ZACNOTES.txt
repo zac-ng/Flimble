@@ -1,0 +1,9 @@
+Program needs to be stripped down of unneccessary stuff
+Use aws sdk to connect to get public dns name, maybe connect to db to get username or just pull it from sdk.
+What if user changes their name?  Rember to update one in database.
+Remove menu bar at bottom
+Check for disconnect, if tab closed delete, if so alert the user maybe
+Get SSH Terminal to write booting when ec2 instance is turning on
+https://github.com/billchurch/webssh2
+I removed unncessary stuff in repo, also hard coded the username and password in for testing, remember to remove.
+http://localhost:3113/ssh/host/127.0.0.1
