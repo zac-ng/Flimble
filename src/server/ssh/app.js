@@ -4,28 +4,28 @@
 
 var path = require('path')
 var fs = require('fs')
-//var nodeRoot = path.dirname(require.main.filename)
-//var publicPath = path.join(nodeRoot, 'client', 'public')
-var publicPath = path.join(__dirname, '../', '../', 'client', 'public');
+// var nodeRoot = path.dirname(require.main.filename)
+// var publicPath = path.join(nodeRoot, 'client', 'public')
+var publicPath = path.join(__dirname, '../', '../', 'client', 'public')
 var express = require('express')
 var logger = require('morgan')
 
-const PORT = process.env.PORT || 3113;
-const IP = process.env.IP;
+const PORT = process.env.PORT || 3113
+const IP = process.env.IP
 
 // sane defaults if config.json or parts are missing
-let config = {
+const config = {
   listen: {
     ip: '127.0.0.1',
     port: PORT
   },
   user: {
-    name: 'znn26',
-    password: 'RVwFuq04mhoa',
+    name: 'user',
+    password: 'user',
     privatekey: null
   },
   ssh: {
-    host: 'tux.cs.drexel.edu',
+    host: '100.24.24.184',
     port: 22,
     term: 'xterm-color',
     readyTimeout: 20000,
@@ -100,7 +100,7 @@ var app = express()
 var server = require('http').Server(app)
 var myutil = require('./util')
 myutil.setDefaultCredentials(config.user.name, config.user.password, config.user.privatekey)
-console.log("UTIL: ", myutil);
+console.log('UTIL: ', myutil)
 var validator = require('validator')
 var io = require('socket.io')(server, { serveClient: false, path: '/ssh/socket.io' })
 var socket = require('./socket')
@@ -118,7 +118,7 @@ app.disable('x-powered-by')
 app.use('/ssh', express.static(publicPath, expressOptions))
 
 // favicon from root if being pre-fetched by browser to prevent a 404
-app.use(favicon(path.join(publicPath,'favicon.ico')));
+app.use(favicon(path.join(publicPath, 'favicon.ico')))
 
 app.get('/ssh/reauth', function (req, res, next) {
   var r = req.headers.referer || '/'
@@ -127,9 +127,9 @@ app.get('/ssh/reauth', function (req, res, next) {
 
 // eslint-disable-next-line complexity
 app.get('/ssh/host/:host?', function (req, res, next) {
-  req.session.username = 'znn26';
-  req.session.password = 'RVwFuq04mhoa';
-  console.log("PASSWORD:" + req.session.username + " " + req.session.password)
+  req.session.username = 'user'
+  req.session.password = 'user'
+  console.log('PASSWORD:' + req.session.username + ' ' + req.session.password)
   res.sendFile(path.join(path.join(publicPath, 'client.htm')))
   // capture, assign, and validated variables
   req.session.ssh = {
