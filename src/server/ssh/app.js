@@ -25,7 +25,7 @@ const config = {
     privatekey: null
   },
   ssh: {
-    host: '100.24.24.184',
+    host: '52.91.189.151',
     port: 22,
     term: 'xterm-color',
     readyTimeout: 20000,
@@ -106,6 +106,7 @@ var io = require('socket.io')(server, { serveClient: false, path: '/ssh/socket.i
 var socket = require('./socket')
 var expressOptions = require('./expressOptions')
 var favicon = require('serve-favicon')
+const { ModuleFilenameHelpers } = require('webpack')
 
 // express
 app.use(safeShutdownGuard)
@@ -242,5 +243,4 @@ function stop (reason) {
   io.close()
   server.close()
 }
-
 module.exports = { server: server, config: config }
