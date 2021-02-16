@@ -28,8 +28,8 @@
 //   })
 // }
 module.exports.connect = function(num) {  //Export this as a function called connect that takes in a number num. This allows us to pass in the ip.
-      var config = require('./app').config
-      var server = require('./app').server
+      var config = require('./app')(num).config
+      var server = require('./app')(num).server
       console.log("NUM:" + num);
       server.listen({ host: config.listen.ip, port: config.listen.port })
 

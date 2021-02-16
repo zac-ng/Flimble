@@ -1,7 +1,7 @@
 'use strict'
 /* jshint esversion: 6, asi: true, node: true */
 // app.js
-
+module.exports = function(num){
 var path = require('path')
 var fs = require('fs')
 // var nodeRoot = path.dirname(require.main.filename)
@@ -12,6 +12,7 @@ var logger = require('morgan')
 
 const PORT = process.env.PORT || 3113
 const IP = process.env.IP
+const HOST = num; //takes in host variable
 
 // sane defaults if config.json or parts are missing
 const config = {
@@ -25,7 +26,7 @@ const config = {
     privatekey: null
   },
   ssh: {
-    host: '52.91.189.151',
+    host: HOST,
     port: 22,
     term: 'xterm-color',
     readyTimeout: 20000,
@@ -243,4 +244,7 @@ function stop (reason) {
   io.close()
   server.close()
 }
-module.exports = { server: server, config: config }
+console.log("NUM IS " + num);
+return {server: server, config:config}
+}
+// module.exports = { server: server, config: config }
