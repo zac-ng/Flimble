@@ -1,32 +1,17 @@
 {
   "name": "paas-ssh",
   "version": "0.1.0",
-  "ignore": [
-    ".gitignore"
-  ],
-  "bin": "./index.js",
   "description": "Paas Linux SSH Machines",
-  "homepage": "https://github.com/zac-ng/sshmachine/",
-  "keywords": [
-    "ssh"
-  ],
-  "license": "SEE LICENSE IN FILE - LICENSE",
-  "private": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/zac-ng/sshmachine/"
-  },
-  "contributors": [
-    {
-      "name": "Zachary Nguyen",
-      "email": "zac.ng201@gmail.com"
-    }
-  ],
-  "engines": {
-    "node": ">= 6"
-  },
-  "bugs": {
-    "url": "https://github.com/zac-ng/sshmachine/issues"
+  "license": "Refer to LICENSE.md",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "webpack --progress --colors --config ../scripts/webpack.prod.js",
+    "builddev": "webpack --progress --colors --config ../scripts/webpack.dev.js",
+    "analyze": "webpack --json --config ../scripts/webpack.prod.js | webpack-bundle-size-analyzer",
+    "test": "snyk test",
+    "watch": "nodemon index.js",
+    "standard": "standard --verbose --fix | snazzy"
   },
   "dependencies": {
     "aws-sdk": "^2.844.0",
@@ -38,28 +23,11 @@
     "express": "~4.17.1",
     "express-session": "^1.17.1",
     "morgan": "~1.9.1",
-    "read-config-ng": "^3.0.1",
     "serve-favicon": "^2.5.0",
     "socket.io": "2.2.0",
     "ssh2": "^0.8.9",
     "uuid": "^8.3.2",
     "validator": "^12.2.0"
-  },
-  "scripts": {
-    "start": "node index.js",
-    "build": "webpack --progress --colors --config ../scripts/webpack.prod.js",
-    "builddev": "webpack --progress --colors --config ../scripts/webpack.dev.js",
-    "analyze": "webpack --json --config ../scripts/webpack.prod.js | webpack-bundle-size-analyzer",
-    "test": "snyk test",
-    "watch": "nodemon index.js",
-    "standard": "standard --verbose --fix | snazzy"
-  },
-  "standard": {
-    "ignore": [
-      "client/public/webssh2.bundle.js",
-      "bigip/*",
-      "workspace/*"
-    ]
   },
   "devDependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
