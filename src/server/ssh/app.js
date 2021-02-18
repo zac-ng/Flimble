@@ -10,14 +10,16 @@ var publicPath = path.join(__dirname, '../', '../', 'client', 'public')
 var express = require('express')
 var logger = require('morgan')
 
-const PORT = process.env.PORT || 3113
+const PORT = process.env.PORT
 const IP = process.env.IP
+//const IP = '127.0.0.1'; //Used for localhost only
+//const PORT = 3113; //Used for localhost only
 const HOST = num; //takes in host variable
 
 // sane defaults if config.json or parts are missing
 const config = {
   listen: {
-    ip: '127.0.0.1',
+    ip: IP,
     port: PORT
   },
   user: {
