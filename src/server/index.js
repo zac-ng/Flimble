@@ -3,7 +3,8 @@ const app = express();
 const http = require('http').Server(app);
 const path = require('path');
 //let dotenv = require('dotenv');   //Commented out because heroku stores env variables without env.
-const PORT = process.env.PORT || 2112
+// const PORT = process.env.PORT || 2112
+const PORT = 2112
 const IP = process.env.IP;
 
 //const ssh = require(path.join(__dirname, 'ssh', 'ssh.js'))
