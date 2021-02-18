@@ -173,6 +173,7 @@ app.get('/ssh/host/:host?', function (req, res, next) {
   }
   if (req.session.ssh.header.name) validator.escape(req.session.ssh.header.name)
   if (req.session.ssh.header.background) validator.escape(req.session.ssh.header.background)
+  //Debug statements
 })
 
 // express error handling
@@ -246,7 +247,6 @@ function stop (reason) {
   io.close()
   server.close()
 }
-console.log("NUM IS " + num);
 return {server: server, config:config}
 }
 // module.exports = { server: server, config: config }
