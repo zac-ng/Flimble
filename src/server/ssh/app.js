@@ -15,7 +15,7 @@ var logger = require('morgan')
 const IP = '127.0.0.1'; //Used for localhost only
 const PORT = 3113; //Used for localhost only.
 const HOST = num; //takes in host variable
-
+console.log("HOST: " + HOST);
 // sane defaults if config.json or parts are missing
 const config = {
   listen: {
@@ -31,7 +31,7 @@ const config = {
     host: HOST,
     port: 22,
     term: 'xterm-color',
-    readyTimeout: 20000,
+    readyTimeout: 50000,
     keepaliveInterval: 120000,
     keepaliveCountMax: 10,
     allowedSubnets: []
@@ -130,9 +130,10 @@ app.get('/ssh/reauth', function (req, res, next) {
 })
 
 // eslint-disable-next-line complexity
-app.get('/ssh/host/:host?', function (req, res, next) {
+app.get('/ssh/user', function (req, res, next) {
   req.session.username = 'user'
   req.session.password = 'user'
+	console.log("connected");
   console.log('PASSWORD:' + req.session.username + ' ' + req.session.password)
   res.sendFile(path.join(path.join(publicPath, 'client.htm')))
   // capture, assign, and validated variables

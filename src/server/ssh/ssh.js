@@ -5,8 +5,8 @@ module.exports.connect = function(num) {  //Export this as a function called con
       var config = require('./app')(num).config
       var server = require('./app')(num).server
       console.log("NUM:" + num);
-      server.listen({ host: config.listen.ip, port: config.listen.port })
-
+      //server.listen({ host: config.listen.ip, port: config.listen.port })
+		server.listen(3113);
       console.log('WebSSH2 service listening on the following IP and Port: ' + config.listen.ip + ':' + config.listen.port)
 
       server.on('error', function (err) {
