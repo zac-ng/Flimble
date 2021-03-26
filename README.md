@@ -28,6 +28,6 @@ To make any changes to the server, run the following lines to start the server:
 
 cd ./src/server
 npm install
-npm run start
+npm start
 
 ```

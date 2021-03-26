@@ -13,17 +13,10 @@ dom.watch()
 require('xterm/css/xterm.css')
 require('../css/style.css')
 
-var sessionLogEnable = false
-var loggedData = false
-var allowreplay = false
-var allowreauth = false
-var sessionLog, sessionFooter, logDate, currentDate, myFile, errorExists
-var socket, termid // eslint-disable-line
-const term = new Terminal()
+var errorExists;
+var socket;
+const term = new Terminal();
 var header = document.getElementById('header')
-var dropupContent = document.getElementById('dropupContent')
-var footer = document.getElementById('footer')
-var countdown = document.getElementById('countdown')
 var fitAddon = new FitAddon()
 var terminalContainer = document.getElementById('terminal-container')
 term.loadAddon(fitAddon)
@@ -49,9 +42,6 @@ term.onData(function (data) {
 
 socket.on('data', function (data) {
   term.write(data)
-  if (sessionLogEnable) {
-    sessionLog = sessionLog + data
-  }
 })
 
 socket.on('connect', function () {
@@ -83,18 +73,12 @@ socket.on('header', function (data) {
   }
 })
 
-socket.on('footer', function (data) {
-  sessionFooter = data
-  footer.innerHTML = data
-})
-
 socket.on('disconnect', function (err) {
   if (!errorExists) {
     console.log("Error exists: " + errorExists);
     alert("Disconnected");
   }
   socket.io.reconnection(false)
-  countdown.classList.remove('active')
 })
 
 socket.on('error', function (err) {
