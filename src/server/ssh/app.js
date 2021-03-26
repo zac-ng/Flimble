@@ -1,7 +1,7 @@
 'use strict'
 /* jshint esversion: 6, asi: true, node: true */
 // app.js
-module.exports = function(num){
+module.exports = function(IP){
 var path = require('path')
 var fs = require('fs')
 // var nodeRoot = path.dirname(require.main.filename)
@@ -10,16 +10,10 @@ var publicPath = path.join(__dirname, '../', '../', 'client', 'public')
 var express = require('express')
 var logger = require('morgan')
 
-// const PORT = process.env.PORT
-// const IP = process.env.IP
-const IP = '127.0.0.1'; //Used for localhost only
-const PORT = 3113; //Used for localhost only.
-const HOST = num; //takes in host variable
-console.log("HOST: " + HOST);
-// sane defaults if config.json or parts are missing
+const PORT = 3113; //By default listen on port 3113
+const HOST = IP; //IP of ubuntu instance user connecting to
 const config = {
   listen: {
-    ip: IP,
     port: PORT
   },
   user: {
@@ -133,8 +127,6 @@ app.get('/ssh/reauth', function (req, res, next) {
 app.get('/ssh/user', function (req, res, next) {
   req.session.username = 'user'
   req.session.password = 'user'
-	console.log("connected");
-  console.log('PASSWORD:' + req.session.username + ' ' + req.session.password)
   res.sendFile(path.join(path.join(publicPath, 'client.htm')))
   // capture, assign, and validated variables
   req.session.ssh = {
