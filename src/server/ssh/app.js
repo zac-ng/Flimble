@@ -97,7 +97,6 @@ var app = express()
 var server = require('http').Server(app)
 var myutil = require('./util')
 myutil.setDefaultCredentials(config.user.name, config.user.password, config.user.privatekey)
-console.log('UTIL: ', myutil)
 var validator = require('validator')
 var io = require('socket.io')(server, { serveClient: false, path: '/ssh/socket.io' })
 var socket = require('./socket')
@@ -189,7 +188,7 @@ io.use(function (socket, next) {
 // bring up socket
 io.on('connection', socket)
 
-// safe shutdown
+// safe shutdownf
 var shutdownMode = false
 var shutdownInterval = 0
 var connectionCount = 0

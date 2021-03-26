@@ -2,9 +2,8 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const path = require('path');
-let dotenv = require('dotenv');
-const PORT = process.env.PORT || 2112
-const IP = process.env.IP;
+const dotenv = require('dotenv');
+const PORT = 2112
 
 const ssh = require(path.join(__dirname, 'ssh', 'ssh.js'))
 
