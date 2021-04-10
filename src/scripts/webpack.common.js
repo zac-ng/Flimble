@@ -5,7 +5,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 module.exports = {
   context: path.resolve('__dirname', '../'),
   entry: {
-    webssh2: './client/src/js/index.js'
+    flimble: './client/src/js/index.js'
   },
   plugins: [
     new CleanWebpackPlugin(),
