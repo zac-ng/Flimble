@@ -46,8 +46,8 @@ redis_client.on('error', err => {
 const register = require('./api/register')(pool, redis_client);
 const login = require('./api/login')(pool, redis_client);
 const refreshtoken = require('./api/refresh_token')(pool, redis_client);
-const ssh= require(path.join(__dirname, 'ssh', 'ssh.js'));
-const { isAuth } = require('./auth/auth')
+const authenticate = require('./api/auth/authenticate');
+const ssh = require(path.join(__dirname, 'ssh', 'ssh.js'));
 const PORT = process.env.PORT || 5000;
 
 //    Serve Static Files    //
@@ -59,13 +59,8 @@ app.use(express.json());
 app.use('/api/register', register);
 app.use('/api/login', login);
 app.use('/api/refresh_token', refreshtoken);
+app.use('/api/authenticate', authenticate);
 app.use(express.static(path.join(__dirname,"..", "client", "build")))
-//app.use(express.static(path.join(__dirname,"..", "client", "public")))
-
-// app.use((req, res, next) => {
-//   console.log("This use has been called")
-//   res.sendFile(path.join(__dirname,"..", "client", "build", "index.html"));
-// });
 
 //    Middleware    //
 
@@ -78,56 +73,9 @@ app.use('/user/ssh/', async (req, res, next) => {
 	res.redirect('http://localhost:' + sshPort + '/user/ssh');	//When running on localhost, redirect here.
 })
 
-//    Routes    //
-
-app.get('/', (req, res) => {
-  console.log("This get has been called");
-  res.sendFile(path.join(__dirname,"..", "client", "build", "index.html"));
-});
-async function bob(IP){
-  let result =  await ssh.connect(IP)
-  return result
-}
-
-app.post('/authenticate', (req, res) => {
-  try{
-    const userId = isAuth(req);
-    console.log("USER ID: " + userId);
-    if(userId != null)
-    {
-      res.json(({
-        "error": null,
-        code: 1
-      }))
-    }
-    else
-    {
-      console.log("Error")
-      res.json({
-        "error": "No access token sent.",
-        "code": -1
-      }
-      )
-    }
-  }
-  catch(err)
-  {
-    console.log(err);
-    res.json({
-      "error": "An error was encountered on the server, please try again later.",
-      "code": -2
-    })
-  }
-})
-
-//Placing React Router at bottom to render react only.
-
-const rootRouter = express.Router();
-
-rootRouter.get('(/*)?', async (req, res, next) => {
+app.get('(/*)?', async (req, res, next) => {
   res.sendFile(path.join(__dirname,"..", "client", "build", 'index.html'));
 });
-app.use(rootRouter);
 
 http.listen(process.env.SERVER_PORT);
 console.log('Listening on port ' + process.env.SERVER_PORT);

@@ -8,7 +8,7 @@ const {
     createRefreshToken,
     sendRefreshToken,
     sendAccessToken
-  } = require('../auth/token.js');
+  } = require('./auth/token.js');
 
 //  Shorthand Email Regex, not RFC compliant
  

@@ -9,7 +9,7 @@ const {
   createAccessToken,
   createRefreshToken,
   sendRefreshToken,
-} = require('../auth/token.js');
+} = require('./auth/token.js');
 
 module.exports = (pool, redis_client) => {
   router.post('/', (req, res) => {

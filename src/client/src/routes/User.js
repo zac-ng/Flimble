@@ -25,7 +25,7 @@ export default function User(){
         let result;
         if(token)
         {
-            result = await fetch('http://localhost:5000/authenticate', {
+            result = await fetch('http://localhost:5000/api/authenticate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function User(){
 
         token = localStorage.getItem('accesstoken');
         console.log("New Access Token: " + token);
-        result = await fetch('http://localhost:5000/authenticate', {
+        result = await fetch('http://localhost:5000/api/authenticate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
