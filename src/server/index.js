@@ -67,7 +67,18 @@ app.use(express.static(path.join(__dirname,"..", "client", "build")))
 //   res.sendFile(path.join(__dirname,"..", "client", "build", "index.html"));
 // });
 
-//      Routes      //
+//    Middleware    //
+
+app.use('/user/ssh/', async (req, res, next) => {
+  const IP = '3.82.242.133';
+  const sshPort = await getPort({port: getPort.makeRange(5000, 5100)});
+	ssh.connect(IP, sshPort)	//ssh allows us to pass in a variable, thus we can pass in a number. This can allow us to query the api and then pass it in to be connected.
+  console.log("Connected to " + IP + " on port " + sshPort + "\n Redirecting to terminal");
+	//res.redirect('http://75.101.232.49:3113/ssh/user');	//When running on EC2 redirect here.
+	res.redirect('http://localhost:' + sshPort + '/user/ssh');	//When running on localhost, redirect here.
+})
+
+//    Routes    //
 
 app.get('/', (req, res) => {
   console.log("This get has been called");
@@ -77,16 +88,6 @@ async function bob(IP){
   let result =  await ssh.connect(IP)
   return result
 }
-
-app.get('/bob', async (req, res) =>
-{
-	const IP = '3.82.242.133';
-  const sshPort = await getPort({port: getPort.makeRange(5000, 5100)});
-	ssh.connect(IP, sshPort)	//ssh allows us to pass in a variable, thus we can pass in a number. This can allow us to query the api and then pass it in to be connected.
-  console.log("Connected to " + IP + " on port " + sshPort + "\n Redirecting to terminal");
-	//res.redirect('http://75.101.232.49:3113/ssh/user');	//When running on EC2 redirect here.
-	res.redirect('http://localhost:' + sshPort + '/user/ssh');	//When running on localhost, redirect here.
-})
 
 app.post('/authenticate', (req, res) => {
   try{

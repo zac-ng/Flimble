@@ -36,7 +36,7 @@ export default function User(){
             console.log(result.code);
             if(result.code > 0)
             {
-                window.location.href = '/bob';
+                window.location.href = '/user/ssh';
                 return;
             }
         }
@@ -62,7 +62,7 @@ export default function User(){
         if(result.code < 0) 
             window.location.href = '/login';
         else
-            window.location.href = '/bob';
+            window.location.href = '/user/ssh';
     }
 
     useEffect( async () => {
