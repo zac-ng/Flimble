@@ -4,7 +4,6 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const path = require('path');
-const getPort = require('get-port');
 
 //    Setup Postgres Connection Pool    //
 
@@ -19,7 +18,6 @@ const config = {
   database: process.env.DATABASE,
   port: process.env.DATABASE_PORT,
   password: process.env.DATABASE_PASSWORD,
-  //ssl: true
 };
 
 const pool = new Pool(config);
@@ -64,14 +62,15 @@ app.use(express.static(path.join(__dirname,"..", "client", "build")))
 
 //    Middleware    //
 
-app.use('/user/ssh/', async (req, res, next) => {
-  const IP = '3.82.242.133';
-  const sshPort = await getPort({port: getPort.makeRange(5000, 5100)});
-	ssh.connect(IP, sshPort)	//ssh allows us to pass in a variable, thus we can pass in a number. This can allow us to query the api and then pass it in to be connected.
-  console.log("Connected to " + IP + " on port " + sshPort + "\n Redirecting to terminal");
-	//res.redirect('http://75.101.232.49:3113/ssh/user');	//When running on EC2 redirect here.
-	res.redirect('http://localhost:' + sshPort + '/user/ssh');	//When running on localhost, redirect here.
+// app.use('/user', (req, res, next) => {
+
+// })
+
+app.use('/user/ssh/', (req, res, next) => {
+	ssh.connect(process.env.SERVER_PORT, res);
 })
+
+//    React Route   //
 
 app.get('(/*)?', async (req, res, next) => {
   res.sendFile(path.join(__dirname,"..", "client", "build", 'index.html'));

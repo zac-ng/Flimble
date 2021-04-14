@@ -3,6 +3,7 @@
 import * as io from 'socket.io-client'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
+import Swal from 'sweetalert2'
 /* import * as fit from 'xterm/dist/addons/fit/fit'
  */
 import { library, dom } from '@fortawesome/fontawesome-svg-core'
@@ -71,14 +72,29 @@ socket.on('header', function (data) {
 
 socket.on('disconnect', function (err) {
   if (!errorExists) {
-    console.log("Error exists: " + errorExists);
-    alert("Disconnected");
+  Swal.fire({
+      icon: 'warning',
+      title: 'Disconnected',
+      text: 'You were disconnected',
+      footer: 'Redirecting in 5 seconds'
+    })
   }
   socket.io.reconnection(false)
+  window.setTimeout(() => {
+    window.location.href = "/"
+  }, 5000)
 })
 
 socket.on('error', function (err) {
   if (!errorExists) {
-    alert("Error");
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'There was an error on our servers!',
+      footer: 'Redirecting in 5 seconds.'
+    })
+    window.setTimeout(() => {
+      window.location.href = "/"
+    }, 5000)
   }
 })
