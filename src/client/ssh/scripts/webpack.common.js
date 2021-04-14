@@ -5,19 +5,19 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 module.exports = {
   context: path.resolve('__dirname', '../'),
   entry: {
-    flimble: './client/src/js/index.js'
+    flimble: './src/js/index.js'
   },
   plugins: [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
-      './client/src/client.htm',
-      './client/src/favicon.ico'
+      './src/client.htm',
+      './src/favicon.ico'
     ]),
     new ExtractTextPlugin('[name].css')
   ],
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, '../client/public')
+    path: path.resolve(__dirname, '../public')
   },
   module: {
     rules: [

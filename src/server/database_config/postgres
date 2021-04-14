@@ -1,0 +1,12 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TABLE user_login (
+    userid uuid DEFAULT uuid_generate_v4 (),
+    username VARCHAR NOT NULL,
+    email VARCHAR NOT NULL,
+    password VARCHAR NOT NULL, 
+    salt VARCHAR NOT NULL,
+    creation_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+INSERT into user_login (username, email, password, salt) VALUES ('bob2', 'email', 'pw', 'uniquesalt') RETURNING userid;
+
+SELECT COUNT(1) FROM user_login WHERE username = 'bob';

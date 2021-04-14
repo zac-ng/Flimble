@@ -55,10 +55,6 @@ socket.on('setTerminalOpts', function (data) {
   term.setOption('bellStyle', data.bellStyle)
 })
 
-socket.on('title', function (data) {
-  document.title = data
-})
-
 socket.on('headerBackground', function (data) {
   header.style.backgroundColor = data
 })

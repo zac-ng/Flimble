@@ -17,14 +17,19 @@
     "ssh2": "~0.8.8",
     "validator": "^12.2.0"
   },
+  "watch": {
+    "build": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "js, jsx"
+    }
+  },
   "scripts": {
-    "start": "node index.js",
     "build": "webpack --progress --colors --config scripts/webpack.prod.js",
     "builddev": "webpack --progress --colors --config scripts/webpack.dev.js",
     "analyze": "webpack --json --config scripts/webpack.prod.js | webpack-bundle-size-analyzer",
-    "test": "snyk test",
-    "watch": "nodemon index.js",
-    "standard": "standard --verbose --fix | snazzy"
+    "watch": "npm-watch"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
@@ -35,9 +40,8 @@
     "css-loader": "^3.4.2",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^5.1.0",
-    "nodaemon": "0.0.5",
+    "npm-watch": "^0.9.0",
     "postcss-discard-comments": "^4.0.2",
-    "snazzy": "^8.0.0",
     "standard": "^14.3.1",
     "standard-version": "^9.1.1",
     "style-loader": "^1.1.3",

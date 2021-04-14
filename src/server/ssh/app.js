@@ -4,7 +4,7 @@
 module.exports = function(IP){
 var path = require('path')
 var fs = require('fs')
-var publicPath = path.join(__dirname, '../', '../', 'client', 'public')
+var publicPath = path.join(__dirname, '../', '../', 'client', 'ssh', 'public')
 var express = require('express')
 var logger = require('morgan')
 
