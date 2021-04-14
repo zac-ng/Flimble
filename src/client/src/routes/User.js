@@ -18,9 +18,8 @@ export default function User(){
       }
       
     //  Onload Verify User
-    const [showTerminal, setShowTerminal] = useState(false);
-
-    useEffect( async () => {
+    // const [showTerminal, setShowTerminal] = useState(false);
+    async function authenticate() {
         let token = localStorage.getItem('accesstoken');
         console.log("Token: " + token);
         let result;
@@ -37,7 +36,7 @@ export default function User(){
             console.log(result.code);
             if(result.code > 0)
             {
-                setShowTerminal(true);
+                window.location.href = '/bob';
                 return;
             }
         }
@@ -57,19 +56,27 @@ export default function User(){
         result = await result.json(); 
 
         //      If null refresh token redirect, otherwise render screen     //
+
         console.log("CODE: " + result.code);
 
         if(result.code < 0) 
             window.location.href = '/login';
         else
-            setShowTerminal(true);
+            window.location.href = '/bob';
+    }
+
+    useEffect( async () => {
+        authenticate();
+        window.addEventListener('pageshow', (event) => {        //      Allows authentication even if user presses back
+            authenticate();
+        });
     }, [])
 
     //      Render loading screen while we are waiting for connection.  When a connection is made render terminal.      //
 
     return(
         <React.Fragment>
-            {(showTerminal && <Loading />) || <SSH />}
+            <Loading></Loading>
         </React.Fragment>
     )
 }

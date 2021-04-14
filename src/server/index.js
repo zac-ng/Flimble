@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const path = require('path');
+const getPort = require('get-port');
 
 //    Setup Postgres Connection Pool    //
 
@@ -45,7 +46,7 @@ redis_client.on('error', err => {
 const register = require('./api/register')(pool, redis_client);
 const login = require('./api/login')(pool, redis_client);
 const refreshtoken = require('./api/refresh_token')(pool, redis_client);
-const ssh = require(path.join(__dirname, 'ssh', 'ssh.js'));
+const ssh= require(path.join(__dirname, 'ssh', 'ssh.js'));
 const { isAuth } = require('./auth/auth')
 const PORT = process.env.PORT || 5000;
 
@@ -72,14 +73,19 @@ app.get('/', (req, res) => {
   console.log("This get has been called");
   res.sendFile(path.join(__dirname,"..", "client", "build", "index.html"));
 });
+async function bob(IP){
+  let result =  await ssh.connect(IP)
+  return result
+}
 
-app.get('/bob', (req, res) =>
+app.get('/bob', async (req, res) =>
 {
-	const IP = '3.82.242.133'
-	ssh.connect(IP)	//ssh allows us to pass in a variable, thus we can pass in a number. This can allow us to query the api and then pass it in to be connected.
-    console.log("Connected to " + IP + "\n Redirecting to terminal");
+	const IP = '3.82.242.133';
+  const sshPort = await getPort({port: getPort.makeRange(5000, 5100)});
+	ssh.connect(IP, sshPort)	//ssh allows us to pass in a variable, thus we can pass in a number. This can allow us to query the api and then pass it in to be connected.
+  console.log("Connected to " + IP + " on port " + sshPort + "\n Redirecting to terminal");
 	//res.redirect('http://75.101.232.49:3113/ssh/user');	//When running on EC2 redirect here.
-	res.redirect('http://localhost:3113/ssh/user');	//When running on localhost, redirect here.
+	res.redirect('http://localhost:' + sshPort + '/user/ssh');	//When running on localhost, redirect here.
 })
 
 app.post('/authenticate', (req, res) => {
@@ -112,7 +118,6 @@ app.post('/authenticate', (req, res) => {
     })
   }
 })
-
 
 //Placing React Router at bottom to render react only.
 
