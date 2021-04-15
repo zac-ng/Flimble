@@ -1,47 +1,15 @@
-module.exports = function(IP, PORT, pool){
+module.exports = function(IP, PORT, username, ssh_password){
   var path = require('path')
   var publicPath = path.join(__dirname, '../', '../', 'client', 'ssh', 'public')
   var express = require('express')
-  const cookieParser = require('cookie-parser');
-  const { verify } = require('jsonwebtoken');
-
-  async function getLogin(token){
-    return new Promise((resolve, reject) => {
-      console.log("Token: " + token);
-      const { userId } = verify(token, process.env.ACCESS_TOKEN_SECRET);
-      (async () => {
-        console.log("Pool connected");
-        const client = await pool.connect();
-        let query = "SELECT username, ssh_password FROM user_login WHERE userid = $1;";
-        let data = [userId];
-        console.log("Query: " + query);
-        try {
-            let result = await client.query(query, data);
-            if(result.rows.length > 0)
-            {
-                console.log("Username: " + result.rows[0].username + "\nPassword: " + result.rows[0].ssh_password);
-                resolve([result.rows[0].username, result.rows[0].ssh_password]);
-            }
-            else
-            {
-              reject([null, null])
-            }
-        } finally {
-            // Make sure to release the client before any error handling,
-            // just in case the error handling itself throws an error.
-            client.release()
-        }
-        })().catch(err => console.log(err.stack))
-    });
-  }
 
   const config = {
     listen: {
       port: PORT
     },
     user: {
-      name: 'user',
-      password: 'user',
+      name: username,
+      password: ssh_password,
       privatekey: null
     },
     ssh: {
@@ -119,6 +87,7 @@ module.exports = function(IP, PORT, pool){
   var app = express()
   var server = require('http').Server(app)
   var myutil = require('./util')
+  myutil.setDefaultCredentials(config.user.name, config.user.password, config.user.privatekey)
   var validator = require('validator')
   var io = require('socket.io')(server, { serveClient: false, path: '/ssh/socket.io' })
   var socket = require('./socket')
@@ -134,7 +103,6 @@ module.exports = function(IP, PORT, pool){
 
   // static files
   app.use('/ssh', express.static(publicPath, expressOptions))
-  app.use(cookieParser());
 
   // favicon from root if being pre-fetched by browser to prevent a 404
   app.use(favicon(path.join(publicPath, 'favicon.ico')))
@@ -146,11 +114,6 @@ module.exports = function(IP, PORT, pool){
 
   // eslint-disable-next-line complexity
   app.get('/user/ssh', async function (req, res, next) {
-    const login = await getLogin(req.cookies.accesstoken)
-    if(login[0] == null)
-      res.redirect('/login')
-    console.log("Login retrieved: " + login);
-    myutil.setDefaultCredentials(login[0], login[1])
     res.sendFile(path.join(path.join(publicPath, 'client.htm')))
     // capture, assign, and validated variables
     req.session.ssh = {

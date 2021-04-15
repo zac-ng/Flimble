@@ -2,11 +2,6 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const generator = require('generate-password');
-const AWS = require('aws-sdk');
-AWS.config.update({ region: 'us-east-1' });
-const ec2 = new AWS.EC2();
-const Client = require('ssh2').Client;
-const conn  = new Client();
 
 const {
     createAccessToken,
@@ -14,85 +9,6 @@ const {
     sendRefreshToken,
     sendAccessToken
   } = require('./auth/token.js');
-
-  const params = {
-    InstanceIds: [
-       process.env.EC2_INSTANCE_ID
-    ]
-   };
-
-function getIP() {
-    return new Promise((resolve, reject) => {
-    ec2.describeInstances(params, function (err, data) {
-            if (err) {
-            console.log(err);
-            reject(null);
-            }
-            else{
-            resolve(data.Reservations[0].Instances[0].PublicIpAddress)
-            }
-        });  
-    });
-}
-
-function bootMachine(){
-    return new Promise((resolve, reject) => {
-        ec2.startInstances(params, (err, data) => {
-        if (err) 
-        {
-            console.log(err, err.stack);
-            reject(err);
-        }
-        else     
-        {
-            console.log("Machine initializing");
-            resolve(data);
-        }
-        });
-    })
-}
-  
-function checkIfRunning(){
-    return new Promise((resolve, reject) => {
-        ec2.waitFor('instanceRunning', params, (err, data) => {
-        if (err) 
-        {
-            console.log(err, err.stack);
-            reject(err);
-        }
-        else
-        {
-            console.log("Machine successfully booted up.");
-            resolve(data);
-        }
-        });
-    })
-}
-
-async function addUser(command, IP){
-    return new Promise((resolve, reject) => {
-        conn.on('ready', function() {
-        console.log('Client :: ready');
-        conn.exec(command, function(err, stream) {
-          if (err)
-            reject()
-          stream.on('close', function(code, signal) {
-            console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
-            conn.end();
-            resolve()
-          }).on('data', function(data) {
-            console.log('STDOUT: ' + data);
-          }).stderr.on('data', function(data) {
-            console.log('STDERR: ' + data);
-          });
-        });
-        }).connect({
-            host: IP,
-            username: process.env.EC2_SUDO_USER,
-            password: process.env.EC2_SUDO_PASSWORD
-        });
-      });
-}
  
 var emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
 
@@ -211,16 +127,6 @@ module.exports = (pool, redis_client) => {
                         const userid = result.rows[0].userid;
                         console.log("Successfully added to database user " + userid);
 
-                        //      Add User to Machine     //
-
-                        await bootMachine();
-                        await checkIfRunning();
-                        const IP = await getIP();
-                        
-                        const command = 'sudo useradd -m -p $(openssl passwd -1 \'' + ssh_password + '\') -s /bin/bash \'' + username + '\'';
-
-                        await addUser(command, IP);
-
                         //      Generate Tokens     //
 
                         const accessToken = createAccessToken(userid);
@@ -238,16 +144,6 @@ module.exports = (pool, redis_client) => {
 
                         sendRefreshToken(res, refreshToken);
                         sendAccessToken(res, req, accessToken);
-
-                        // const token = jwt.sign({
-                        //     exp:  Math.floor(Date.now() / 1000) + (60 * 60),
-                        //     user: username  
-                        // }, 'secret');
-                        // res.json({
-                        //     message: "Successfully added to database.",
-                        //     code: 1,
-                        //     credentials: token
-                        // });
                     }
                     else
                     {

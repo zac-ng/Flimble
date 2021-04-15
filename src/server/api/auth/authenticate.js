@@ -21,7 +21,6 @@ const isAuth = (req) => {
 router.post('/', (req, res) => {
     try{
         const userId = isAuth(req);
-        console.log("USER ID: " + userId);
         if(userId != null)
         {   
             console.log("User is authenticated.");

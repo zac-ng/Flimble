@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 //    Setup Postgres Connection Pool    //
 
@@ -53,6 +54,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname,"..", "client", "src", "static")))
 
 app.use(express.urlencoded({extended: true}));
+app.use(cookieParser())
 app.use(express.json());
 app.use('/api/register', register);
 app.use('/api/login', login);
