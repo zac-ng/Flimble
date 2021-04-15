@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import Cookies from 'universal-cookie';
 import Loading from './Loading'
-import SSH from './SSH'
 
 export default function User(){
 
@@ -15,6 +15,8 @@ export default function User(){
           })).json();
         console.log("Access token: " + result.accesstoken);
         localStorage.setItem('accesstoken', result.accesstoken);
+        const cookies = new Cookies();
+        cookies.set('accesstoken', result.accesstoken, { path: '/user/ssh' });
       }
       
     //  Onload Verify User
@@ -36,7 +38,14 @@ export default function User(){
             console.log(result.code);
             if(result.code > 0)
             {
-                window.location.href = '/user/ssh';
+                // result = await fetch('http://localhost:5000/user/ssh', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         authorization: 'Bearer '+ token,
+                //     }
+                // })
+                window.location.href = '/user/ssh'
                 return;
             }
         }
@@ -62,7 +71,16 @@ export default function User(){
         if(result.code < 0) 
             window.location.href = '/login';
         else
+        {
+            // result = await fetch('http://localhost:5000/user/ssh', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         authorization: 'Bearer '+ token,
+            //     }
+            // })
             window.location.href = '/user/ssh';
+        }
     }
 
     useEffect( async () => {

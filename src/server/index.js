@@ -62,12 +62,8 @@ app.use(express.static(path.join(__dirname,"..", "client", "build")))
 
 //    Middleware    //
 
-// app.use('/user', (req, res, next) => {
-
-// })
-
-app.use('/user/ssh/', (req, res, next) => {
-	ssh.connect(process.env.SERVER_PORT, res);
+app.use('/user/ssh', (req, res, next) => {
+	ssh.connect(process.env.SERVER_PORT, req, res, pool);
 })
 
 //    React Route   //

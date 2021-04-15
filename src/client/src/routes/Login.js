@@ -14,6 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useForm, Controller } from "react-hook-form";
+import Cookies from 'universal-cookie';
 
 function Copyright() {
   return (
@@ -75,6 +76,8 @@ export default function SignIn() {
     console.log("TOKEN: " + token);
     if(token != null){
       localStorage.setItem('accesstoken', token);
+      const cookies = new Cookies();
+      cookies.set ('accesstoken', token, { path: '/user/ssh' });
       window.location.href = '/user'
     }
     else{

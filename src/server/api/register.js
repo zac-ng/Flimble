@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-// const jwt = require('jsonwebtoken');
+const generator = require('generate-password');
+const AWS = require('aws-sdk');
+AWS.config.update({ region: 'us-east-1' });
+const ec2 = new AWS.EC2();
+const SSH = require('simple-ssh')
 
 const {
     createAccessToken,
@@ -10,7 +14,59 @@ const {
     sendAccessToken
   } = require('./auth/token.js');
 
-//  Shorthand Email Regex, not RFC compliant
+  const params = {
+    InstanceIds: [
+       process.env.EC2_INSTANCE_ID
+    ]
+   };
+
+function getIP() {
+    return new Promise((resolve, reject) => {
+    ec2.describeInstances(params, function (err, data) {
+            if (err) {
+            console.log(err);
+            reject(null);
+            }
+            else{
+            resolve(data.Reservations[0].Instances[0].PublicIpAddress)
+            }
+        });  
+    });
+}
+
+function bootMachine(){
+    return new Promise((resolve, reject) => {
+        ec2.startInstances(params, (err, data) => {
+        if (err) 
+        {
+            console.log(err, err.stack);
+            reject(err);
+        }
+        else     
+        {
+            console.log("Machine initializing");
+            resolve(data);
+        }
+        });
+    })
+}
+  
+function checkIfRunning(){
+    return new Promise((resolve, reject) => {
+        ec2.waitFor('instanceRunning', params, (err, data) => {
+        if (err) 
+        {
+            console.log(err, err.stack);
+            reject(err);
+        }
+        else
+        {
+            console.log("Machine successfully booted up.");
+            resolve(data);
+        }
+        });
+    })
+}
  
 var emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
 
@@ -116,14 +172,42 @@ module.exports = (pool, redis_client) => {
 
                         const salt = await bcrypt.genSalt(10);
                         const hash = await bcrypt.hash(password, salt);
+                        const ssh_password = generator.generate({
+                            length: 16, 
+                            numbers: true,
+                            symbols: true, 
+                            strict: true
+                        })
 
                         //      Query Database       //
 
-                        query = "INSERT into user_login (username, email, password, salt) VALUES ($1, $2, $3, $4) RETURNING userid;"
-                        data = [username, email, hash, salt];
+                        query = "INSERT into user_login (username, email, password, salt, ssh_password) VALUES ($1, $2, $3, $4, $5) RETURNING userid;"
+                        data = [username, email, hash, salt, ssh_password];
                         let result = await client.query(query, data);
                         const userid = result.rows[0].userid;
                         console.log("Successfully added to database user " + userid);
+
+                        //      Add User to Machine     //
+
+                        const IP = getIP();
+                        if(!IP){
+                            await bootMachine();
+                            await checkIfRunning();
+                        }
+
+                        var ssh = new SSH({
+                            host: IP,
+                            user: process.env.EC2_SUDO_USER,
+                            pass: process.env.EC2_SUDO_PASSWORD
+                        });
+                        
+                        const command = 'sudo useradd -m -p $(openssl passwd -1 ' + ssh_password + ') -s /bin/bash ' + username
+
+                        ssh.exec(command, {
+                            out: function(stdout) {
+                                console.log(stdout);
+                            }
+                        }).start();
 
                         //      Generate Tokens     //
 

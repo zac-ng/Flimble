@@ -5,7 +5,8 @@ CREATE TABLE user_login (
     email VARCHAR NOT NULL,
     password VARCHAR NOT NULL, 
     salt VARCHAR NOT NULL,
-    creation_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+    creation_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ssh_password VARCHAR NOT NULL
 );
 INSERT into user_login (username, email, password, salt) VALUES ('bob2', 'email', 'pw', 'uniquesalt') RETURNING userid;
 

@@ -81,7 +81,7 @@ socket.on('disconnect', function (err) {
   }
   socket.io.reconnection(false)
   window.setTimeout(() => {
-    window.location.href = "/"
+    window.location.href = "http://" + window.location.hostname + ":5000/"
   }, 5000)
 })
 
@@ -94,7 +94,7 @@ socket.on('error', function (err) {
       footer: 'Redirecting in 5 seconds.'
     })
     window.setTimeout(() => {
-      window.location.href = "/"
+      window.location.href = "http://" + window.location.hostname + ":5000/"
     }, 5000)
   }
 })
