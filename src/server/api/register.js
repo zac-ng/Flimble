@@ -5,7 +5,8 @@ const generator = require('generate-password');
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'us-east-1' });
 const ec2 = new AWS.EC2();
-const SSH = require('simple-ssh')
+const Client = require('ssh2').Client;
+const conn  = new Client();
 
 const {
     createAccessToken,
@@ -66,6 +67,31 @@ function checkIfRunning(){
         }
         });
     })
+}
+
+async function addUser(command, IP){
+    return new Promise((resolve, reject) => {
+        conn.on('ready', function() {
+        console.log('Client :: ready');
+        conn.exec(command, function(err, stream) {
+          if (err)
+            reject()
+          stream.on('close', function(code, signal) {
+            console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
+            conn.end();
+            resolve()
+          }).on('data', function(data) {
+            console.log('STDOUT: ' + data);
+          }).stderr.on('data', function(data) {
+            console.log('STDERR: ' + data);
+          });
+        });
+        }).connect({
+            host: IP,
+            username: process.env.EC2_SUDO_USER,
+            password: process.env.EC2_SUDO_PASSWORD
+        });
+      });
 }
  
 var emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
@@ -155,13 +181,11 @@ module.exports = (pool, redis_client) => {
             }
             else
             {
-                console.log("Before connection.");
                 (async () => {
                 console.log("Pool connected");
                 const client = await pool.connect();
                 let query = "SELECT COUNT(1) FROM user_login WHERE username = $1;";
                 let data = [username];
-                console.log("Query: " + query);
                 try {
                     let result = await client.query(query, data);
                     if(result.rows[0].count == 0)
@@ -189,25 +213,13 @@ module.exports = (pool, redis_client) => {
 
                         //      Add User to Machine     //
 
-                        const IP = getIP();
-                        if(!IP){
-                            await bootMachine();
-                            await checkIfRunning();
-                        }
-
-                        var ssh = new SSH({
-                            host: IP,
-                            user: process.env.EC2_SUDO_USER,
-                            pass: process.env.EC2_SUDO_PASSWORD
-                        });
+                        await bootMachine();
+                        await checkIfRunning();
+                        const IP = await getIP();
                         
-                        const command = 'sudo useradd -m -p $(openssl passwd -1 ' + ssh_password + ') -s /bin/bash ' + username
+                        const command = 'sudo useradd -m -p $(openssl passwd -1 \'' + ssh_password + '\') -s /bin/bash \'' + username + '\'';
 
-                        ssh.exec(command, {
-                            out: function(stdout) {
-                                console.log(stdout);
-                            }
-                        }).start();
+                        await addUser(command, IP);
 
                         //      Generate Tokens     //
 

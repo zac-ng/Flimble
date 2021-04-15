@@ -119,7 +119,6 @@ module.exports = function(IP, PORT, pool){
   var app = express()
   var server = require('http').Server(app)
   var myutil = require('./util')
-  myutil.setDefaultCredentials(config.user.name, config.user.password, config.user.privatekey)
   var validator = require('validator')
   var io = require('socket.io')(server, { serveClient: false, path: '/ssh/socket.io' })
   var socket = require('./socket')
@@ -151,8 +150,7 @@ module.exports = function(IP, PORT, pool){
     if(login[0] == null)
       res.redirect('/login')
     console.log("Login retrieved: " + login);
-    req.session.username = 'user'
-    req.session.password = 'user'
+    myutil.setDefaultCredentials(login[0], login[1])
     res.sendFile(path.join(path.join(publicPath, 'client.htm')))
     // capture, assign, and validated variables
     req.session.ssh = {
