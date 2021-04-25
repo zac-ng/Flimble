@@ -61,6 +61,7 @@ export default function SignUp() {
         shouldUnregister: true,
       });
     const [showPassword, setShowPassword] = useState(false);
+    const [serverError, setServerError] = useState(false)
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const onSubmit = async data => {
     console.log("SUBMITTED DATA");
@@ -83,7 +84,7 @@ export default function SignUp() {
       window.location.href = '/user'
     }
     else{
-      alert(JSON.stringify(response.message));
+      setServerError(response.message)
     }
   };
 
@@ -101,6 +102,7 @@ export default function SignUp() {
           {errors.username && <Alert variant="filled" severity="error">{errors.username.message}</Alert>}
           {errors.email && <Alert variant="filled" severity="error">{errors.email.message}</Alert>}
           {errors.password && <Alert variant="filled" severity="error">{errors.password.message}</Alert>}
+          {serverError && <Alert variant="filled" severity="error">{serverError}</Alert>}
           <br />
           <Grid container spacing={3}>
             <Grid item xs={12}>

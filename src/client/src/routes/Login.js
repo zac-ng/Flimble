@@ -62,9 +62,9 @@ export default function SignIn() {
     shouldUnregister: true,
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState(false)
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const onSubmit = async data => {
-    console.log("SUBMITTED DATA");
     let response = await fetch('/api/login', {
       method: 'POST',
       headers: {
@@ -83,7 +83,7 @@ export default function SignIn() {
       window.location.href = '/user'
     }
     else{
-      console.log(JSON.stringify(response.message));
+      setServerError(response.message)
     }
   };
 
@@ -100,6 +100,7 @@ export default function SignIn() {
         <form name="loginForm" className={classes.form}>
           {errors.username && <Alert variant="filled" severity="error">{errors.username.message}</Alert>}
           {errors.password && <Alert variant="filled" severity="error">{errors.password.message}</Alert>}
+          {serverError && <Alert variant="filled" severity="error">{serverError}</Alert>}
           <br />
           <Grid container spacing={3}>
             <Grid item xs={12}>
