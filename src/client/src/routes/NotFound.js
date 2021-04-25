@@ -12,7 +12,7 @@ export default function NotFound(){
     
     return(
         <React.Fragment>
-            <img style={image} src={error} alt="404" />
+            <img style={image} src={error} alt="404"/>
         </React.Fragment>
     )
 }
