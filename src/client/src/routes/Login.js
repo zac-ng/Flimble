@@ -15,6 +15,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useForm, Controller } from "react-hook-form";
 import Cookies from 'universal-cookie';
+import Alert from '@material-ui/lab/Alert';
+
 
 function Copyright() {
   return (
@@ -96,6 +98,9 @@ export default function SignIn() {
           Sign in
         </Typography>
         <form name="loginForm" className={classes.form}>
+          {errors.username && <Alert variant="filled" severity="error">{errors.username.message}</Alert>}
+          {errors.password && <Alert variant="filled" severity="error">{errors.password.message}</Alert>}
+          <br />
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Controller
@@ -121,7 +126,6 @@ export default function SignIn() {
                 }   
                 control={control}               
               />
-            {errors.username && <p>{errors.username.message}</p>}
             </Grid>
             <Grid item xs={12}>
               <Controller
@@ -155,7 +159,6 @@ export default function SignIn() {
                 }}                 
                 control={control}               
               />
-              {errors.password && <p>{errors.password.message}</p>}
             </Grid>
           </Grid>
           <Button
