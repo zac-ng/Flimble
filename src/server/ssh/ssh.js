@@ -120,7 +120,7 @@ module.exports.connect = async function(serverPort, req, res, pool) {
 
   //    Boot Machine    //
 
-  const IP = await getIP();
+  let IP = await getIP();
 
   if(IP == undefined)
   {
