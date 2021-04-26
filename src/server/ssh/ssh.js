@@ -64,6 +64,7 @@ function checkIfRunning(){
 }
 
 async function addUser(command, IP){
+  console.log(command + ' ip: ' + IP)
   return new Promise((resolve, reject) => {
       conn.on('ready', function() {
       //console.log('Client :: ready');
@@ -138,10 +139,14 @@ module.exports.connect = async function(serverPort, req, res, pool) {
   await addUser(command, IP);
 
   console.log("User added to machine");
+
+  const host = req.hostname;
+  const domain = host.split(":")[0];
+  console.log("Domain: " + domain);
   
   if(!IP){
     console.log("There was an error getting the IP of the instance.");
-    return res.redirect('http://localhost:' + serverPort + '/home');
+    return res.redirect('http://' + domain + ':' + serverPort + '/home');
   }
 
   console.log("Socket server listening on port " + socketPort + " and IP " + IP)
@@ -159,8 +164,8 @@ module.exports.connect = async function(serverPort, req, res, pool) {
       console.log("WebSSH2 listening on port: " + config.listen.port)
     } else {
       console.log('WebSSH2 server.listen ERROR: ' + err.code)
-      res.redirect('http://localhost:' + serverPort + '/home')
+      res.redirect('http://' + domain + ':' + serverPort + '/home')
     }
   })
-  res.redirect('http://localhost:' + socketPort + '/user/ssh');
+  res.redirect('http://' + domain + ':' + socketPort + '/user/ssh');
 }

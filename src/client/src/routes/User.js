@@ -6,7 +6,7 @@ export default function User(){
 
     async function checkRefreshToken() {
         const result = await (
-          await fetch('http://localhost:5000/api/refresh_token', {
+          await fetch('/api/refresh_token', {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
@@ -27,7 +27,7 @@ export default function User(){
         let result;
         if(token)
         {
-            result = await fetch('http://localhost:5000/api/authenticate', {
+            result = await fetch('/api/authenticate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ export default function User(){
 
         token = localStorage.getItem('accesstoken');
         console.log("New Access Token: " + token);
-        result = await fetch('http://localhost:5000/api/authenticate', {
+        result = await fetch('/api/authenticate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
