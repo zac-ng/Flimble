@@ -167,5 +167,6 @@ module.exports.connect = async function(serverPort, req, res, pool) {
       res.redirect('http://' + domain + ':' + serverPort + '/home')
     }
   })
-  res.redirect('http://' + domain + ':' + socketPort + '/user/ssh');
+  console.log('Redirecting to: ' + 'http://localhost:5000/user/console');
+  res.redirect('/user/console');
 }

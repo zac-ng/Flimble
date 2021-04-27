@@ -89,7 +89,7 @@ module.exports = function(IP, PORT, username, ssh_password){
   var myutil = require('./util')
   myutil.setDefaultCredentials(config.user.name, config.user.password, config.user.privatekey)
   var validator = require('validator')
-  var io = require('socket.io')(server, { serveClient: false, path: '/ssh/socket.io' })
+  var io = require('socket.io')(server, { serveClient: true, path: 'localhost:5001/ssh/socket.io' })
   var socket = require('./socket')
   var expressOptions = require('./expressOptions')
   var favicon = require('serve-favicon')
@@ -113,7 +113,8 @@ module.exports = function(IP, PORT, username, ssh_password){
   })
 
   // eslint-disable-next-line complexity
-  app.get('/user/ssh', async function (req, res, next) {
+  app.get('/user/console', async function (req, res, next) {
+    console.log("Connected to socket server");
     res.sendFile(path.join(path.join(publicPath, 'client.htm')))
     // capture, assign, and validated variables
     req.session.ssh = {

@@ -1,5 +1,3 @@
-'use strict'
-
 import * as io from 'socket.io-client'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'

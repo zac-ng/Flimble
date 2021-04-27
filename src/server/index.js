@@ -62,6 +62,9 @@ app.use('/api/refresh_token', refreshtoken);
 app.use('/api/authenticate', authenticate);
 app.use(express.static(path.join(__dirname,"..", "client", "build")))
 
+const publicPath = path.join(__dirname, '../', 'client', 'ssh', 'public')
+app.use('/ssh', express.static(publicPath))
+
 //    Middleware    //
 
 app.use('/user/ssh', (req, res, next) => {
