@@ -4,7 +4,7 @@ Flimble is a browser based terminal connected to a Ubuntu server.  Users are aut
 
 ![Demo](https://raw.githubusercontent.com/zac-ng/Flimble/main/demo.gif)
 
-It is currently accessible on https://flimble.com
+It is currently accessible on http://flimble.com
 
 If the site is not responding you can try the mirror: http://75.101.232.49:5000
 
