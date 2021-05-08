@@ -1,6 +1,6 @@
 # Flimble
 
-Flimble is a browser based terminal connected to a Ubuntu server.  Users are automatically added to the server and provided access through the in browser ssh terminal.  Flimble is built on Node.js, React.js, and AWS EC2.  It features custom authentication using PostgreSQL, Redis, and JWT.
+Flimble is a browser based terminal connected to a Ubuntu server.  Users are automatically added to the server and provided access through the in browser ssh terminal.  Flimble is built on Node.js, React.js, WebSSH@, and AWS EC2.  It features custom authentication using PostgreSQL, Redis, and JWT.
 
 ![Demo](https://raw.githubusercontent.com/zac-ng/Flimble/main/demo.gif)
 
@@ -25,7 +25,7 @@ To run your own instance on a local machine
 
 ### Create Postgres Table
 ```bash
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE user_login (
     userid uuid DEFAULT uuid_generate_v4 (),
     username VARCHAR NOT NULL,
